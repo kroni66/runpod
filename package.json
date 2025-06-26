@@ -6,11 +6,13 @@
     "name": "Runpod Manager Team",
     "email": "info@example.com"
   },
-  "main": "electron/main.ts",
+  "main": "dist-electron/main.js",
   "scripts": {
-    "dev": "concurrently -k -r \"vite\" \"electron .\"",
+    "dev": "concurrently -k -r \"vite\" \"npm run electron:dev\"",
     "web": "vite",
-    "build": "vite build && electron-builder",
+    "build": "npm run build:electron && vite build && electron-builder",
+    "build:electron": "tsc --project tsconfig.electron.json",
+    "electron:dev": "npm run build:electron && electron .",
     "start": "electron .",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -18,7 +20,7 @@
     "appId": "com.runpod.desktopmanager",
     "files": [
       "dist",
-      "electron",
+      "dist-electron",
       "package.json"
     ],
     "directories": {
@@ -33,14 +35,15 @@
     "styled-components": "^6.1.8"
   },
   "devDependencies": {
-    "electron": "^28.1.3",
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.18",
     "@types/styled-components": "^5.1.34",
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
+    "electron": "^28.1.3",
     "electron-builder": "^24.6.3",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "vite": "^5.2.7",
     "vite-plugin-electron": "^0.15.2"

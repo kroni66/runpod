@@ -25,7 +25,7 @@ async function runpodRequest(apiKey: string, body: object) {
     body: JSON.stringify(body),
   });
   if (!resp.ok) throw new Error(`Runpod API error: ${resp.status} ${resp.statusText}`);
-  const json = await resp.json();
+  const json = await resp.json() as any;
   if (json.errors) throw new Error(json.errors[0]?.message || 'GraphQL error');
   return json.data;
 }
@@ -36,7 +36,7 @@ contextBridge.exposeInMainWorld('runpodAPI', {
       const data = await runpodRequest(apiKey, {
         query: `query Pods { myself { pods { id name desiredStatus runtime { uptimeInSeconds gpus { gpuUtilPercent memoryUtilPercent } ports { ip publicPort isIpPublic } } } } }`,
       });
-      return { pods: data.myself.pods ?? [] };
+      return { pods: data?.myself?.pods ?? [] };
     } catch (e: any) {
       return { error: e.message };
     }
@@ -47,7 +47,7 @@ contextBridge.exposeInMainWorld('runpodAPI', {
         query: `mutation StopPod($podId: String!) { podStop(input: {podId: $podId}) { id desiredStatus } }`,
         variables: { podId },
       });
-      return data.podStop;
+      return data?.podStop;
     } catch (e: any) {
       return { error: e.message };
     }
@@ -58,7 +58,7 @@ contextBridge.exposeInMainWorld('runpodAPI', {
         query: `mutation ResumePod($podId: String!, $bidPerGpu: Float!, $gpuCount: Int!) { podBidResume(input: { podId: $podId, bidPerGpu: $bidPerGpu, gpuCount: $gpuCount }) { id desiredStatus } }`,
         variables: { podId, bidPerGpu: 0.2, gpuCount: 1 },
       });
-      return data.podBidResume;
+      return data?.podBidResume;
     } catch (e: any) {
       return { error: e.message };
     }
