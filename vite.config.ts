@@ -8,7 +8,14 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 5173,
+    port: 12000,
     strictPort: true,
+    host: '0.0.0.0',
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'X-Frame-Options': 'ALLOWALL',
+    },
+    allowedHosts: ['work-1-pfocgafuldryuwev.prod-runtime.all-hands.dev', 'work-2-pfocgafuldryuwev.prod-runtime.all-hands.dev'],
   },
 });
