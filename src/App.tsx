@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import PodList from './components/PodList';
+import { getRunpodAPI, Pod } from './utils/runpodAPI';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -104,7 +105,7 @@ const ErrorMsg = styled.div`
 
 declare global {
   interface Window {
-    runpodAPI: {
+    runpodAPI?: {
       listPods: (apiKey: string) => Promise<{ pods?: any[]; error?: string }>;
       startPod: (apiKey: string, podId: string) => Promise<any>;
       stopPod: (apiKey: string, podId: string) => Promise<any>;
@@ -114,7 +115,7 @@ declare global {
 
 function App() {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('runpodApiKey') ?? '');
-  const [pods, setPods] = useState<any[]>([]);
+  const [pods, setPods] = useState<Pod[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -131,11 +132,26 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const res = await window.runpodAPI.listPods(apiKey);
-      if (res.error) setError(res.error);
-      else setPods(res.pods ?? []);
+      const api = getRunpodAPI();
+      const res = await api.listPods(apiKey);
+      if (res.error) {
+        // Provide more helpful error messages for common issues
+        if (res.error.includes('Failed to fetch') || res.error.includes('CORS')) {
+          setError('Unable to connect to Runpod API. This may be due to CORS restrictions when running in web mode. For full functionality, please use the Electron desktop app.');
+        } else if (res.error.includes('401') || res.error.includes('Unauthorized')) {
+          setError('Invalid API key. Please check your Runpod API key and try again.');
+        } else {
+          setError(res.error);
+        }
+      } else {
+        setPods(res.pods ?? []);
+      }
     } catch (e: any) {
-      setError(e.message);
+      if (e.message.includes('Failed to fetch') || e.message.includes('CORS')) {
+        setError('Unable to connect to Runpod API. This may be due to CORS restrictions when running in web mode. For full functionality, please use the Electron desktop app.');
+      } else {
+        setError(e.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -156,6 +172,19 @@ function App() {
             <Title>Runpod Manager</Title>
             <Subtitle>
               Manage your <b>Runpod.io</b> pods from your desktop
+              {!window.runpodAPI && (
+                <div style={{ 
+                  marginTop: '8px', 
+                  padding: '6px 12px', 
+                  background: 'rgba(226, 173, 19, 0.1)', 
+                  color: '#e2ad13', 
+                  borderRadius: '8px', 
+                  fontSize: '0.85rem',
+                  border: '1px solid rgba(226, 173, 19, 0.2)'
+                }}>
+                  ⚠️ Running in web mode - some features may be limited
+                </div>
+              )}
             </Subtitle>
           </TitleArea>
         </Header>

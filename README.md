@@ -20,11 +20,19 @@ npm install
 
 ### 2. Start in development
 
+**For Electron desktop app (recommended):**
 ```bash
 npm run dev
 ```
 
 This will launch the Vite dev server and Electron app together.
+
+**For web development (limited functionality):**
+```bash
+npm run web
+```
+
+This will start only the web server. Note: Some features may be limited due to CORS restrictions when running in web mode.
 
 ### 3. Build a packaged app
 
@@ -49,14 +57,35 @@ The installer will be output by `electron-builder`.
 ├── src/                  # React renderer process code
 │   ├── main.tsx
 │   ├── App.tsx
-│   └── components/
-│       ├── PodList.tsx
-│       └── PodItem.tsx
+│   ├── components/
+│   │   ├── PodList.tsx
+│   │   └── PodItem.tsx
+│   └── utils/
+│       └── runpodAPI.ts      # Shared API utilities
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
 └── README.md
 ```
+
+## Troubleshooting
+
+### "Cannot read properties of undefined (reading 'listPods')" Error
+
+This error occurs when the application is running in web mode instead of Electron mode. The `window.runpodAPI` object is only available when running as an Electron app.
+
+**Solution:**
+- Use `npm run dev` instead of `npm run web` for full functionality
+- If you must use web mode, the app will automatically fall back to direct API calls, but may encounter CORS restrictions
+
+### CORS Issues in Web Mode
+
+When running in web mode (`npm run web`), you may see CORS-related errors because browsers block direct requests to external APIs.
+
+**Solutions:**
+1. **Recommended:** Use the Electron desktop app (`npm run dev`)
+2. Use a CORS proxy service (not recommended for production)
+3. Run the app from a server that handles CORS headers
 
 ## Security
 

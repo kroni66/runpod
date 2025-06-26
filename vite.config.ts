@@ -16,6 +16,6 @@ export default defineConfig({
       'Access-Control-Allow-Origin': '*',
       'X-Frame-Options': 'ALLOWALL',
     },
-    allowedHosts: ['work-1-pfocgafuldryuwev.prod-runtime.all-hands.dev', 'work-2-pfocgafuldryuwev.prod-runtime.all-hands.dev'],
+    allowedHosts: true,
   },
 });

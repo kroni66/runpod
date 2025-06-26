@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import PodItem from './PodItem';
+import { Pod } from '../utils/runpodAPI';
 
 const ListContainer = styled.div`
   background: rgba(25, 27, 32, 0.7);
@@ -61,17 +62,6 @@ const RefreshButton = styled.button`
     font-size: 1.1rem;
   }
 `;
-
-type Pod = {
-  id: string;
-  name: string;
-  desiredStatus: string;
-  runtime?: {
-    uptimeInSeconds?: number;
-    gpus?: { gpuUtilPercent?: number; memoryUtilPercent?: number }[];
-    ports?: { ip?: string; publicPort?: number; isIpPublic?: boolean }[];
-  };
-};
 
 type Props = {
   pods: Pod[];

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { getRunpodAPI, Pod } from '../utils/runpodAPI';
 
 const Item = styled.div`
   background: linear-gradient(145deg, #242730, #2a2e38);
@@ -142,17 +143,6 @@ const StatRow = styled.div`
   }
 `;
 
-type Pod = {
-  id: string;
-  name: string;
-  desiredStatus: string;
-  runtime?: {
-    uptimeInSeconds?: number;
-    gpus?: { gpuUtilPercent?: number; memoryUtilPercent?: number }[];
-    ports?: { ip?: string; publicPort?: number; isIpPublic?: boolean }[];
-  };
-};
-
 type Props = {
   pod: Pod;
   apiKey: string;
@@ -175,7 +165,8 @@ const PodItem: React.FC<Props> = ({ pod, apiKey, onAction, onError }) => {
     setActioning(true);
     onError(null);
     try {
-      const res = await window.runpodAPI.startPod(apiKey, pod.id);
+      const api = getRunpodAPI();
+      const res = await api.startPod(apiKey, pod.id);
       if (res.error) onError(res.error);
       else onAction();
     } catch (e: any) {
@@ -189,7 +180,8 @@ const PodItem: React.FC<Props> = ({ pod, apiKey, onAction, onError }) => {
     setActioning(true);
     onError(null);
     try {
-      const res = await window.runpodAPI.stopPod(apiKey, pod.id);
+      const api = getRunpodAPI();
+      const res = await api.stopPod(apiKey, pod.id);
       if (res.error) onError(res.error);
       else onAction();
     } catch (e: any) {
