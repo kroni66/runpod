@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
 const isDev = !electron_1.app.isPackaged;
+const DEV_SERVER_PORT = process.env.VITE_DEV_SERVER_PORT || '12000';
 function createWindow() {
     const win = new electron_1.BrowserWindow({
         width: 900,
@@ -49,7 +50,7 @@ function createWindow() {
         },
     });
     if (isDev) {
-        win.loadURL('http://localhost:5173');
+        win.loadURL(`http://localhost:${DEV_SERVER_PORT}`);
         win.webContents.openDevTools();
     }
     else {

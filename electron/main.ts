@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 
 const isDev = !app.isPackaged;
+const DEV_SERVER_PORT = process.env.VITE_DEV_SERVER_PORT || '12000';
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -17,7 +18,7 @@ function createWindow() {
   });
 
   if (isDev) {
-    win.loadURL('http://localhost:5173');
+    win.loadURL(`http://localhost:${DEV_SERVER_PORT}`);
     win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'));

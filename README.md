@@ -78,6 +78,29 @@ This error occurs when the application is running in web mode instead of Electro
 - Use `npm run dev` instead of `npm run web` for full functionality
 - If you must use web mode, the app will automatically fall back to direct API calls, but may encounter CORS restrictions
 
+### Electron Connection Refused Error
+
+If you see `ERR_CONNECTION_REFUSED` when running the Electron app:
+
+1. **Port mismatch**: Make sure Vite dev server is running on the correct port
+2. **Windows users**: Use `npm run dev:win` instead of `npm run dev`
+3. **Manual fix**: Set environment variable `VITE_DEV_SERVER_PORT=12000`
+
+### Git Merge Conflicts
+
+If you see errors like `Unexpected "<<"` during build:
+
+1. Check for merge conflict markers in your files:
+   ```bash
+   git status
+   grep -r "<<<<<<\|======\|>>>>>>" src/
+   ```
+2. Resolve conflicts manually or reset to latest:
+   ```bash
+   git fetch origin
+   git reset --hard origin/main
+   ```
+
 ### CORS Issues in Web Mode
 
 When running in web mode (`npm run web`), you may see CORS-related errors because browsers block direct requests to external APIs.
